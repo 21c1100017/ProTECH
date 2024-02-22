@@ -3,13 +3,13 @@ from logging import INFO
 import os
 import re
 from threading import Lock
-from classes.logmethod import log_setting
+from classes.logmethod import LogSetting
 
 
 class ConfigParmeter:
-    access_log = log_setting.log_setup('access', INFO)
-    error_log = log_setting.log_setup('error', INFO)
-    config_log = log_setting.log_setup('config', INFO)
+    access_log = LogSetting.log_setup('access', INFO)
+    error_log = LogSetting.log_setup('error', INFO)
+    config_log = LogSetting.log_setup('config', INFO)
     lock = Lock()
 
     @staticmethod

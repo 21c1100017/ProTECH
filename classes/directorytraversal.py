@@ -1,9 +1,9 @@
 from mitmproxy import http
 import urllib.parse
 from logging import INFO
-from classes.customerror import custom_error
-from classes.logmethod import log_setting
-from classes.configparmeter import config_parmeter
+from classes.customerror import CustomError
+from classes.logmethod import LogSetting
+from classes.configparmeter import ConfigParmeter
 import os
 from ipaddress import ip_network
 
@@ -26,7 +26,7 @@ class DirectoryTraversal:
 
         for target_string in target_strings:
             if target_string in new_url:
-                detection_log = log_setting.log_setup('detection', INFO)
+                detection_log = LogSetting.log_setup('detection', INFO)
                 detection_log.warning(
                     "path[%s]に特殊な文字列を検知しました。接続IP[%s]", path, client_ip)
                 # target_stringの部分で分けてtarget_string前の部分を選ぶ
@@ -45,16 +45,16 @@ class DirectoryTraversal:
     @staticmethod
     def access_control(flow, path):
         # ログのセットアップ
-        access_log = log_setting.log_setup('access', INFO)
+        access_log = LogSetting.log_setup('access', INFO)
 
         # config.iniを読み込む
-        denied_path = config_parmeter.get_parameter(
+        denied_path = ConfigParmeter.get_parameter(
             'Settings', 'denied_path', [])
-        custom_error_content = custom_error.load_custom_error_page(
-            os.path.join(custom_error.current_directory, "error_pages/forbidden.html"), flow)
+        custom_error_content = CustomError.load_custom_error_page(
+            os.path.join(CustomError.current_directory, "error_pages/forbidden.html"), flow)
 
         # config.iniからIPアドレス範囲を読み込む
-        allowed_ip_ranges = config_parmeter.get_parameter(
+        allowed_ip_ranges = ConfigParmeter.get_parameter(
             'Settings', 'allowed_ip_ranges', [])
 
         allowed_networks = [ip_network(ip_range)

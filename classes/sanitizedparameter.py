@@ -3,13 +3,13 @@ import urllib.parse
 import html
 from mitmproxy import http
 from requests_toolbelt.multipart import decoder
-from classes.logmethod import log_setting
+from classes.logmethod import LogSetting
 
 class SanitizedParameter:
-    access_log = log_setting.log_setup('access', INFO)
-    error_log = log_setting.log_setup('error', INFO)
-    config_log = log_setting.log_setup('config', INFO)
-    detection_log = log_setting.log_setup('detection', INFO)
+    access_log = LogSetting.log_setup('access', INFO)
+    error_log = LogSetting.log_setup('error', INFO)
+    config_log = LogSetting.log_setup('config', INFO)
+    detection_log = LogSetting.log_setup('detection', INFO)
 
     @staticmethod
     def check_parameter(flow):

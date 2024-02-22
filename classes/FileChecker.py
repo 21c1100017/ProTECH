@@ -4,18 +4,19 @@ from PIL import Image
 from logging import INFO
 import re
 from requests_toolbelt.multipart import decoder
-from classes.logmethod import log_setting
-from classes.configparmeter import config_parmeter
+from classes.logmethod import LogSetting
+from classes.configparmeter import ConfigParmeter
 
 
 class FileChecker:
 
     MAX_FILE_SIZE_UNCOMPRESSED = 2 * 1024 * 1024  # 2 MB未満はそのまま
     MAX_FILE_SIZE_COMPRESSED = 5 * 1024 * 1024  # 2 MB以上5 MB以下は圧縮して通す
-    access_log = log_setting.log_setup('access', INFO)
-    error_log = log_setting.log_setup('error', INFO)
-    config_log = log_setting.log_setup('config', INFO)
+    access_log = LogSetting.log_setup('access', INFO)
+    error_log = LogSetting.log_setup('error', INFO)
+    config_log = LogSetting.log_setup('config', INFO)
 
+    @staticmethod
     def run(flow: http.HTTPFlow) -> None:
         client_ip = flow.client_conn.address[0] if flow.client_conn else "N/A"
         path = flow.request.path if flow.request else "N/A"
@@ -85,7 +86,7 @@ class FileChecker:
     # 0 -> エラー
     # 1 -> OK (圧縮スキップ)
     # 2 -> OK (圧縮対象)
-    def check_file(FileChecker, file: bytes, flow: http.HTTPFlow) -> int:
+    def check_file(file: bytes, flow: http.HTTPFlow) -> int:
 
         # ファイルサイズを確認
         file_size = len(file)
@@ -126,26 +127,26 @@ class FileChecker:
 
         return 2
 
-    def is_PNG(FileChecker, file: bytes) -> bool:
+    def is_PNG(file: bytes) -> bool:
         if re.match(b'^\x89PNG', file[:4]) is not None:
             return True
         else:
             return False
 
-    def is_JPEG(FileChecker, file: bytes) -> bool:
+    def is_JPEG(file: bytes) -> bool:
         if re.match(b'^\xff\xd8', file[:2]) is not None:
             return True
         else:
             return False
 
     # 画像の圧縮
-    def compress_file(FileChecker, file: bytes, flow: http.HTTPFlow) -> bytes:
+    def compress_file(file: bytes, flow: http.HTTPFlow) -> bytes:
         client_ip = flow.client_conn.address[0] if flow.client_conn else "N/A"
         path = flow.request.path if flow.request else "N/A"
         # config.iniを読み込む
-        pixel_count = config_parmeter.get_parameter(
+        pixel_count = ConfigParmeter.get_parameter(
             'Settings', 'pixel_count', 256)
-        quality = config_parmeter.get_parameter('Settings', 'quality', 85)
+        quality = ConfigParmeter.get_parameter('Settings', 'quality', 85)
 
         FileChecker.config_log.info('pixel_count[%s]を読み込みます', pixel_count)
         FileChecker.config_log.info('quality[%s]を読み込みます', quality)

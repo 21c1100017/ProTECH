@@ -2,14 +2,14 @@
 from mitmproxy import http
 from logging import INFO
 import os
-from classes.logmethod import log_setting
+from classes.logmethod import LogSetting
 
 
 class CustomError:
     custom_error_page = "<html><body><h1>Custom Error Page</h1></body></html>"
     current_directory = os.path.join(os.getcwd(), "classes")
-    access_log = log_setting.log_setup('access', INFO)
-    error_log = log_setting.log_setup('error', INFO)
+    access_log = LogSetting.log_setup('access', INFO)
+    error_log = LogSetting.log_setup('error', INFO)
 
     @staticmethod
     def load_custom_error_page(page, flow: http.HTTPFlow) -> str:

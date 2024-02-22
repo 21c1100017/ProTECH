@@ -1,29 +1,30 @@
 from logging import INFO
 import time
-from classes.logmethod import log_setting
-from classes.configparmeter import config_parmeter
+from classes.logmethod import LogSetting
+from classes.configparmeter import ConfigParmeter
 
 
 class FlowMonitor:
     # クラス変数として flow_count を初期化
     flow_count = {}
 
+    @staticmethod
     def request_check(flow):
         ip = flow.client_conn.address[0]
         user_agent = flow.request.headers.get('User-Agent', '')
         # ログのセットアップ
-        detection_log = log_setting.log_setup('detection', INFO)
-        access_log = log_setting.log_setup('access', INFO)
+        detection_log = LogSetting.log_setup('detection', INFO)
+        access_log = LogSetting.log_setup('access', INFO)
 
         # config.iniを読み込む
         # 人間用の閾値
-        human_threshold = config_parmeter.get_parameter(
+        human_threshold = ConfigParmeter.get_parameter(
             'Settings', 'human_threshold', 10)
         # スクリプト用の閾値
-        script_threshold = config_parmeter.get_parameter(
+        script_threshold = ConfigParmeter.get_parameter(
             'Settings', 'script_threshold', 100)
         # アクセス拒否をする時間(秒)
-        block_duration = config_parmeter.get_parameter(
+        block_duration = ConfigParmeter.get_parameter(
             'Settings', 'lock_duration', 30)
 
         # 同じIPアドレスとUser-Agentが1分間にthreshold回以上アクセスした場合
