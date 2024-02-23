@@ -8,7 +8,7 @@
 --set termlog_verbosity=info \
 --set block_global=false \
 -s protech.py \
---certs *=./cert.pem \
+--certs *=../cert.pem \
 --ssl-insecure \
 --web-host 0.0.0.0 \
 --web-port 8080
